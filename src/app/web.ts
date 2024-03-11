@@ -1,13 +1,11 @@
-import express, { Express, Request, Response, NextFunction } from "express";
+import express from "express";
+import { publicRoute } from "../route/public-api";
+import { errorMiddleware } from "../middleware/error-middleware";
 
 const web = express()
-
 web.use(express.json())
-web.get('/test', (req: Request, res: Response, next: NextFunction) => {
-    res.status(200).json({
-        data: 'hello world'
-    })
-})
+web.use(errorMiddleware)
+web.use(publicRoute)
 
 export {
     web
