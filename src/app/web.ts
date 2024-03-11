@@ -5,7 +5,7 @@ const web = express()
 web.use(express.json())
 web.get('/test', (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({
-        data: 'ini rijal hafizhun hidayat'
+        data: 'hello world'
     })
 })
 
