@@ -4,8 +4,8 @@ import { errorMiddleware } from "../middleware/error-middleware";
 
 const web = express()
 web.use(express.json())
-web.use(errorMiddleware)
 web.use(publicRoute)
+web.use(errorMiddleware)
 
 export {
     web

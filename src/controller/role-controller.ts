@@ -14,4 +14,42 @@ export class RoleController {
             next(error)
         }
     }
+
+    static async findById(req: Request, res: Response, next: NextFunction){
+        try {
+            const id: number = parseInt(req.params.roleId)
+            const result = await RoleService.findById(id)
+            res.status(200).json({
+                data: result
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async destroyById(req: Request, res: Response, next: NextFunction){
+        try {
+            const id: number = parseInt(req.params.roleId)
+            const result = await RoleService.destroyById(id)
+            res.status(200).json({
+                data: result
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+    
+
+    static async updateDataById(req: Request, res: Response, next: NextFunction){
+        try {
+            const updateRoleRequest: RoleResponseRequest = req.body as RoleResponseRequest
+            const roleId: number = parseInt(req.params.roleId)
+            const result = await RoleService.updateDataById(updateRoleRequest, roleId)
+            res.status(200).json({
+                data: result
+            })
+        } catch (error) {
+            next(error)
+        }      
+    }
 }

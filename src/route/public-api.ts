@@ -5,7 +5,12 @@ import { RoleController } from "../controller/role-controller";
 const publicRoute = express.Router();
 
 publicRoute.post('/api/register', UserController.register)
+
+//role
 publicRoute.post('/api/role', RoleController.store)
+publicRoute.get('/api/role/:roleId', RoleController.findById)
+publicRoute.delete('/api/role/:roleId', RoleController.destroyById)
+publicRoute.put('/api/role/:roleId', RoleController.updateDataById)
 
 export {
     publicRoute

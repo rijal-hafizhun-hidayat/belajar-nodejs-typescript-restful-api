@@ -9,6 +9,7 @@ export const errorMiddleware = async (error: Error, req: Request, res: Response,
         })
     }
     else if(error instanceof ErrorResponse){
+        console.log('true')
         res.status(error.status).json({
             errors: error.message
         })
