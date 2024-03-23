@@ -20,7 +20,7 @@ export class UserController {
             const request: LoginUserRequest = req.body
             const result = await UserService.login(request)
             res.status(200).json({
-                data: result.token
+                data: result
             })
         } catch (error) {
             next(error)
