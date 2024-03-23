@@ -1,6 +1,6 @@
 import { prisma } from "../app/database";
 import { ErrorResponse } from "../error/error-response";
-import { CreateUserRequest, LoginUserRequest, UserResponse, toUserResponse } from "../model/user-model";
+import { CreateUserRequest, LoginUserRequest, LoginUserResponse, UserResponse, toLoginUserResponse, toUserResponse } from "../model/user-model";
 import { UserValidation } from "../validation/user-validation";
 import { Validation } from "../validation/validation";
 import bcrypt from "bcrypt"
@@ -31,7 +31,7 @@ export class UserService {
         return toUserResponse(user)
     }
 
-    static async login(request: LoginUserRequest): Promise<UserResponse>{
+    static async login(request: LoginUserRequest): Promise<LoginUserResponse>{
         const loginUserRequest = Validation.validate(UserValidation.loginRequest, request)
         
         const user = await prisma.user.findUnique({
@@ -64,9 +64,6 @@ export class UserService {
         })
         
 
-        const response = toUserResponse(userToken)
-        response.token = userToken.token!
-
-        return response
+        return toLoginUserResponse(userToken)
     }
 }

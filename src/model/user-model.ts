@@ -18,9 +18,19 @@ export type LoginUserRequest = {
     password: string
 }
 
+export type LoginUserResponse = {
+    token?: string | null
+}
+
 export function toUserResponse(user: user): UserResponse {
     return {
         username: user.username,
         role_id: user.role_id
+    }
+}
+
+export function toLoginUserResponse(user: user): LoginUserResponse{
+    return {
+        token: user.token
     }
 }
