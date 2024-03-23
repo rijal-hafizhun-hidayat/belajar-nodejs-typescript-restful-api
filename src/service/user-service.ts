@@ -1,9 +1,10 @@
 import { prisma } from "../app/database";
 import { ErrorResponse } from "../error/error-response";
-import { CreateUserRequest, UserResponse, toUserResponse } from "../model/user-model";
+import { CreateUserRequest, LoginUserRequest, UserResponse, toUserResponse } from "../model/user-model";
 import { UserValidation } from "../validation/user-validation";
 import { Validation } from "../validation/validation";
 import bcrypt from "bcrypt"
+import Jwt from "jsonwebtoken"
 
 export class UserService {
     static async register(request: CreateUserRequest) : Promise<UserResponse> {
@@ -28,5 +29,44 @@ export class UserService {
         })
 
         return toUserResponse(user)
+    }
+
+    static async login(request: LoginUserRequest): Promise<UserResponse>{
+        const loginUserRequest = Validation.validate(UserValidation.loginRequest, request)
+        
+        const user = await prisma.user.findUnique({
+            where: {
+                username: loginUserRequest.username
+            }
+        })
+
+        if(!user){
+            throw new ErrorResponse(404, 'username or password is wrong')
+        }
+
+        const isUserPasswordValidate = bcrypt.compare(loginUserRequest.password, user.password)
+
+        if(!isUserPasswordValidate){
+            throw new ErrorResponse(404, 'username or password is wrong')
+        }
+
+        const token = Jwt.sign({
+            id: user.id
+        }, 'swefijlzc22@#()33vsd', { expiresIn: 60 * 60 });
+
+        const userToken = await prisma.user.update({
+            where: {
+                username: loginUserRequest.username
+            },
+            data: {
+                token: token
+            }
+        })
+        
+
+        const response = toUserResponse(userToken)
+        response.token = userToken.token!
+
+        return response
     }
 }

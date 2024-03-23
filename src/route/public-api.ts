@@ -5,7 +5,7 @@ import { RoleController } from "../controller/role-controller";
 const publicRoute = express.Router();
 
 publicRoute.post('/api/register', UserController.register)
-
+publicRoute.post('/api/login', UserController.login)
 //role
 publicRoute.post('/api/role', RoleController.store)
 publicRoute.get('/api/role/:roleId', RoleController.findById)

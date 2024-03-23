@@ -13,6 +13,11 @@ export type CreateUserRequest = {
     role_id: number
 }
 
+export type LoginUserRequest = {
+    username: string,
+    password: string
+}
+
 export function toUserResponse(user: user): UserResponse {
     return {
         username: user.username,
