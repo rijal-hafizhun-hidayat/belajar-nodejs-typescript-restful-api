@@ -18,6 +18,10 @@ export type LoginUserRequest = {
     password: string
 }
 
+export type LogoutUserRequest = {
+    username: string
+}
+
 export type LoginUserResponse = {
     token?: string | null
 }
@@ -32,5 +36,11 @@ export function toUserResponse(user: user): UserResponse {
 export function toLoginUserResponse(user: user): LoginUserResponse{
     return {
         token: user.token
+    }
+}
+
+export function toLogoutUserResponse(user: user): LogoutUserRequest{
+    return {
+        username: user.username
     }
 }
