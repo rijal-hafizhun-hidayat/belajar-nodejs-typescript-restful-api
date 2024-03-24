@@ -44,7 +44,7 @@ export class UserService {
             throw new ErrorResponse(404, 'username or password is wrong')
         }
 
-        const isUserPasswordValidate = bcrypt.compare(loginUserRequest.password, user.password)
+        const isUserPasswordValidate = await bcrypt.compare(loginUserRequest.password, user.password)
 
         if(!isUserPasswordValidate){
             throw new ErrorResponse(404, 'username or password is wrong')
