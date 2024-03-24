@@ -1,9 +1,9 @@
 import {Request, Response, NextFunction } from "express";
 import Jwt from "jsonwebtoken"
 import { prisma } from "../app/database";
-import { UserRequest } from "../type/user-request";
+import { UserInterface } from "../interface/user-interface";
 
-export const authMiddleware = async (req: UserRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: UserInterface, res: Response, next: NextFunction) => {
     const token: string = req.get('Authorization')!
 
     if(!token){
