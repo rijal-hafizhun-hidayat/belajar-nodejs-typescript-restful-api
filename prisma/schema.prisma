@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-ts"
+  provider        = "prisma-client-js"
   previewFeatures = ["relationJoins"]
 }
 
@@ -11,52 +8,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id Int @id @default(autoincrement())
-  username String @unique @db.VarChar(255)
-  password String @db.VarChar(255)
-  token String? @db.VarChar(255)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+model address {
+  id          Int      @id @default(autoincrement())
+  street      String   @db.VarChar(255)
+  city        String   @db.VarChar(255)
+  province    String   @db.VarChar(255)
+  country     String   @db.VarChar(255)
+  postal_code Int
+  contact_id  Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
   
-  post Post[]
-  contact Contact[]
+  contact     contact  @relation(fields: [contact_id], references: [id], map: "Address_contact_id_fkey")
+
+  @@index([contact_id], map: "Address_contact_id_fkey")
 }
 
-model Post{
-  id Int @id @default(autoincrement())
-  title String @db.VarChar(255)
-  text String @db.Text
+model contact {
+  id         Int       @id @default(autoincrement())
+  firstname  String    @db.VarChar(255)
+  lastname   String    @db.VarChar(255)
+  email      String    @db.VarChar(255)
+  phone      String    @db.VarChar(255)
+  username   String    @db.VarChar(255)
+  user_id    Int
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  address    address[]
+
+  user       user      @relation(fields: [user_id], references: [id], map: "Contact_user_id_fkey")
+
+  @@index([user_id], map: "Contact_user_id_fkey")
+}
+
+model post {
+  id         Int      @id @default(autoincrement())
+  title      String   @db.VarChar(255)
+  text       String   @db.Text
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  user User @relation(fields: [user_id], references: [id])
-  user_id Int @db.Int
+  user_id    Int
+  
+  user       user     @relation(fields: [user_id], references: [id], map: "Post_user_id_fkey")
+
+  @@index([user_id], map: "Post_user_id_fkey")
 }
 
-model Contact{
-  id Int @id @default(autoincrement())
-  firstname String @db.VarChar(255)
-  lastname String @db.VarChar(255)
-  email String @db.VarChar(255)
-  phone String @db.VarChar(255)
-  username String @db.VarChar(255)
-  user_id Int @db.Int
-  user User @relation(fields: [user_id], references: [id])
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
-
-  address Address[]
+model user {
+  id         Int       @id @default(autoincrement())
+  username   String    @unique(map: "User_username_key") @db.VarChar(255)
+  password   String    @db.VarChar(255)
+  token      String?   @db.VarChar(255)
+  role_id    Int
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  contact    contact[]
+  post       post[]
+  role       role      @relation(fields: [role_id], references: [id], map: "Role_role_id_fkey")
 }
 
-model Address{
-  id Int @id @default(autoincrement())
-  street String @db.VarChar(255)
-  city String @db.VarChar(255)
-  province String @db.VarChar(255)
-  country String @db.VarChar(255)
-  postal_code Int @db.Int
-  contact_id Int @db.Int
-  contact Contact @relation(fields: [contact_id], references: [id])
+model role {
+  id         Int @id @default(autoincrement())
+  name       String @db.VarChar(255)
+  user       user[]
   created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
+  updated_at DateTime @updatedAt
 }
