@@ -1,6 +1,6 @@
 import { prisma } from "../app/database";
 import { ErrorResponse } from "../error/error-response";
-import { CreateUserRequest, LoginUserRequest, LoginUserResponse, UserResponse, toLoginUserResponse, toUserResponse } from "../model/user-model";
+import { CreateUserRequest, LoginUserRequest, LoginUserResponse, LogoutUserRequest, UserResponse, toLoginUserResponse, toLogoutUserResponse, toUserResponse } from "../model/user-model";
 import { UserValidation } from "../validation/user-validation";
 import { Validation } from "../validation/validation";
 import bcrypt from "bcrypt"
@@ -44,7 +44,7 @@ export class UserService {
             throw new ErrorResponse(404, 'username or password is wrong')
         }
 
-        const isUserPasswordValidate = bcrypt.compare(loginUserRequest.password, user.password)
+        const isUserPasswordValidate = await bcrypt.compare(loginUserRequest.password, user.password)
 
         if(!isUserPasswordValidate){
             throw new ErrorResponse(404, 'username or password is wrong')
@@ -65,5 +65,30 @@ export class UserService {
         
 
         return toLoginUserResponse(userToken)
+    }
+
+    static async logout(request: LogoutUserRequest): Promise<LogoutUserRequest>{
+        const logoutRequest = Validation.validate(UserValidation.logoutRequest, request)
+        
+        const user = await prisma.user.findUnique({
+            where: {
+                username: logoutRequest.username
+            }
+        })
+
+        if(!user){
+            throw new ErrorResponse(404, 'account is not found')
+        }
+
+        const logout = await prisma.user.update({
+            where: {
+                username: logoutRequest.username
+            },
+            data: {
+                token: null
+            }
+        })
+
+        return toLogoutUserResponse(logout)
     }
 }
