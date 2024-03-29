@@ -1,3 +1,4 @@
+import { user } from "@prisma/client";
 import { prisma } from "../app/database";
 import { ErrorResponse } from "../error/error-response";
 import { CreateUserRequest, LoginUserRequest, LoginUserResponse, LogoutUserRequest, UserResponse, toLoginUserResponse, toLogoutUserResponse, toUserResponse } from "../model/user-model";
@@ -90,5 +91,25 @@ export class UserService {
         })
 
         return toLogoutUserResponse(logout)
+    }
+
+    static async currentUserLogin(user: user){
+        return await prisma.user.findFirst({
+            where: {
+                token: user.token
+            },
+            select: {
+                username: true,
+                created_at: true,
+                updated_at: true,
+                role: {
+                    select: {
+                        name: true,
+                        created_at: true,
+                        updated_at: true
+                    }
+                }
+            }
+        })
     }
 }

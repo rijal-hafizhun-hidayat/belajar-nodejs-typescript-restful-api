@@ -1,6 +1,7 @@
 import {Request, Response, NextFunction } from "express";
 import { CreateUserRequest, LoginUserRequest, LogoutUserRequest } from "../model/user-model";
 import { UserService } from "../service/user-service";
+import { UserInterface } from "../interface/user-interface";
 
 export class UserController {
     static async register(req: Request, res: Response, next: NextFunction) {
@@ -31,6 +32,17 @@ export class UserController {
         try {
             const request: LogoutUserRequest = req.body
             const result = await UserService.logout(request)
+            res.status(200).json({
+                data: result
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async currentUserLogin(req: UserInterface, res: Response, next: NextFunction){
+        try {
+            const result = await UserService.currentUserLogin(req.user!)
             res.status(200).json({
                 data: result
             })
