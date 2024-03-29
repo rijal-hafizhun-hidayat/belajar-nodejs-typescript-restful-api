@@ -26,6 +26,13 @@ export type LoginUserResponse = {
     token?: string | null
 }
 
+export type CurrentUserLoginResponse = {
+    username: string,
+    created_at: any,
+    updated_at: any,
+    role?: object
+}
+
 export function toUserResponse(user: user): UserResponse {
     return {
         username: user.username,

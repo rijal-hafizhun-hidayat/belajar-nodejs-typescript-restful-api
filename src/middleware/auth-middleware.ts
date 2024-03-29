@@ -1,4 +1,4 @@
-import {Request, Response, NextFunction } from "express";
+import {Response, NextFunction } from "express";
 import Jwt from "jsonwebtoken"
 import { prisma } from "../app/database";
 import { UserInterface } from "../interface/user-interface";
@@ -14,7 +14,7 @@ export const authMiddleware = async (req: UserInterface, res: Response, next: Ne
 
     Jwt.verify(token, 'swefijlzc22@#()33vsd', async function(err, decoded) {
         if(err){
-            return res.status(401).json({
+            res.status(401).json({
                 errorToken: err.name,
                 errorMessage: err.message,
             }).end()
@@ -27,13 +27,13 @@ export const authMiddleware = async (req: UserInterface, res: Response, next: Ne
             })
     
             if(!user){
-                return res.status(401).json({
+                res.status(401).json({
                     data: 'unauthorized'
                 }).end()
             }
             else{
                 req.user = user
-                return next()
+                next();
             }
         }
     });
