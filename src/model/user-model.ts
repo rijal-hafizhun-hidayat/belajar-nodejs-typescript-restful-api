@@ -29,8 +29,7 @@ export type LoginUserResponse = {
 export type CurrentUserLoginResponse = {
     username: string,
     created_at: any,
-    updated_at: any,
-    role?: object
+    updated_at: any
 }
 
 export function toUserResponse(user: user): UserResponse {
@@ -49,5 +48,13 @@ export function toLoginUserResponse(user: user): LoginUserResponse{
 export function toLogoutUserResponse(user: user): LogoutUserRequest{
     return {
         username: user.username
+    }
+}
+
+export function toCurrentLoginResponse(user: user): CurrentUserLoginResponse{
+    return {
+        username: user.username,
+        created_at: user.created_at,
+        updated_at: user.updated_at
     }
 }
