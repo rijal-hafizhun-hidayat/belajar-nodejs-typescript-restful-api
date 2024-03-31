@@ -1,7 +1,7 @@
 import { user } from "@prisma/client";
 import { prisma } from "../app/database";
 import { ErrorResponse } from "../error/error-response";
-import { CreateUserRequest, LoginUserRequest, LoginUserResponse, LogoutUserRequest, UserResponse, toLoginUserResponse, toLogoutUserResponse, toUserResponse } from "../model/user-model";
+import { CreateUserRequest, CurrentUserLoginResponse, LoginUserRequest, LoginUserResponse, LogoutUserRequest, UserResponse, toCurrentLoginResponse, toLoginUserResponse, toLogoutUserResponse, toUserResponse } from "../model/user-model";
 import { UserValidation } from "../validation/user-validation";
 import { Validation } from "../validation/validation";
 import bcrypt from "bcrypt"
@@ -93,23 +93,17 @@ export class UserService {
         return toLogoutUserResponse(logout)
     }
 
-    static async currentUserLogin(user: user){
-        return await prisma.user.findFirst({
+    static async currentUserLogin(user: user): Promise<CurrentUserLoginResponse>{
+        const userLoggedIn = await prisma.user.findFirst({
             where: {
                 token: user.token
-            },
-            select: {
-                username: true,
-                created_at: true,
-                updated_at: true,
-                role: {
-                    select: {
-                        name: true,
-                        created_at: true,
-                        updated_at: true
-                    }
-                }
             }
         })
+
+        if(!userLoggedIn){
+            throw new ErrorResponse(400, 'user not found')
+        }
+
+        return toCurrentLoginResponse(userLoggedIn)
     }
 }
